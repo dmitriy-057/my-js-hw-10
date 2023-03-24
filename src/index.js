@@ -17,17 +17,19 @@ function onSearchCountry() {
     const country = refs.input.value.trim();
     console.log('country', country);
 
+    clearMarkup();
     fetchCountries(country)
     .then(createCountriesMarkup)
-    .catch(Notify.failure("Страны с таким названием не существует"));
+    .catch(error => {
+        Notify.failure("Страны с таким названием не существует");
+        console.log(error);
+    });
 }
 
 function createCountriesMarkup(countries) {
 
-    if(countries > 10) {
-        refs.listCountries.innerHTML = '';
-        refs.countryContainer.innerHTML = '';
-        Notify.info("Найдено много стран. Введите более специфическое название");
+    if(countries.length > 10) {
+       Notify.info("Найдено много совпадений. Введите более специфическое название");
     };
 
     if(countries.length >= 2 && countries.length < 10) {
@@ -35,11 +37,14 @@ function createCountriesMarkup(countries) {
         const markupList = countries
         .map(({ name, flags }) => {            
           return `
-          <li> 
+          <li class="country-list-item"> 
+            <div>
             <img src = ${flags.svg} 
                 alt = "${name}" 
-                width = 100>
-            <span>${name.official}</span>
+                width=100
+                height=80>
+            <span class="country-span">${name.official}</span>
+            </div>
           </li>`;
         }).join('');
         refs.listCountries.innerHTML = markupList;
@@ -50,13 +55,18 @@ function createCountriesMarkup(countries) {
 
         const markupCountry = countries.map(({flags, name,capital, population, languages}) => {
             return `
+            <div class="country-info-box">
+            <div class="country-title-box">
             <img src = ${flags.svg} 
             alt = "${name}" 
-            width = 300> 
-            <h2>${name.official}</h2>
-            <p>${capital}</p>
-            <p>${population}</p>
-            <p>${languages}</p>
+            width = 80> 
+            <h2 class="country-title">${name.official}</h2>
+            </div>
+            <p class="country-params"><b>Capital:</b> ${capital}</p>
+            <p class="country-params"><b>Population:</b> ${population}</p>
+            <p class="country-params"><b>Languages:</b> 
+            ${languages}
+            </p>
             `
         }).join('');
         refs.countryContainer.innerHTML = markupCountry;
@@ -68,6 +78,7 @@ function createCountriesMarkup(countries) {
 
 
 
-// function clearCountries() {
-//     refs.listCountries.innerHTML = "";
-// }
+function clearMarkup() {
+    refs.listCountries.innerHTML = '';
+    refs.countryContainer.innerHTML = '';
+}
