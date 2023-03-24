@@ -3,12 +3,12 @@ import { fetchCountries } from './fetchCountries';
 import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-const DEBOUNCE_DELAY = 300;
+const DEBOUNCE_DELAY = 500;
 
 const refs = {
     input: document.querySelector("#search-box"),
     listCountries: document.querySelector(".country-list"),
-    countryContainer: document.querySelector("country-info"),
+    countryContainer: document.querySelector(".country-info"),
 }
 
 refs.input.addEventListener('input', debounce(onSearchCountry, DEBOUNCE_DELAY));
@@ -24,15 +24,16 @@ function onSearchCountry() {
 
 function createCountriesMarkup(countries) {
 
-    if(countries.length > 10) {
-        refs.listCountries.innerHTML = " ";
-        refs.countryContainer.innerHTML = " ";
+    if(countries > 10) {
+        refs.listCountries.innerHTML = '';
+        refs.countryContainer.innerHTML = '';
         Notify.info("Найдено много стран. Введите более специфическое название");
     };
 
     if(countries.length >= 2 && countries.length < 10) {
+
         const markupList = countries
-        .map(({ name, flags }) => {
+        .map(({ name, flags }) => {            
           return `
           <li> 
             <img src = ${flags.svg} 
@@ -42,7 +43,7 @@ function createCountriesMarkup(countries) {
           </li>`;
         }).join('');
         refs.listCountries.innerHTML = markupList;
-        refs.countryContainer.innerHTML = " ";
+        refs.countryContainer.innerHTML = '';
     };
 
     if(countries.length === 1) {
@@ -59,7 +60,7 @@ function createCountriesMarkup(countries) {
             `
         }).join('');
         refs.countryContainer.innerHTML = markupCountry;
-        refs.listCountries.innerHTML = " ";    
+        refs.listCountries.innerHTML = '';    
     }
 
  
